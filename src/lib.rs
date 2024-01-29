@@ -55,7 +55,7 @@ impl Todo {
 
     pub fn add(&self, args: &[String]) {
         if args.is_empty() {
-            eprintln!("todo add takes at latest one argument");
+            eprintln!("todo add takes at least one argument");
             exit(1);
         }
         // println!("{:?}", args);
@@ -79,10 +79,32 @@ impl Todo {
     }
 
     pub fn remove(&self, args: &[String]) {
-        //
+        if args.is_empty() {
+            eprint!("todo remove takes at least 1 argument");
+            exit(1);
+        }
+        let todo_file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(&self.todo_path)
+            .expect("Could't open todo file");
+        let mut buffer = BufWriter::new(todo_file);
+
+        for (index, line) in self.todo_list.iter().enumerate() {
+            if args.contains(&"done".to_string()) && &line[..4] == "[*]" {
+                continue;
+            }
+            if args.contains(&(index + 1).to_string()) {
+                continue;
+            }
+            let line = format!("{}\n", line);
+            buffer
+                .write_all(line.as_bytes())
+                .expect("unable to write data")
+        }
     }
 
-    pub fn done(&self, args: &[String]) {
+    pub fn done(&self, _args: &[String]) {
         //
     }
 
