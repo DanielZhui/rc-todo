@@ -20,5 +20,4 @@ fn main() {
     } else {
         todo.list();
     }
-    println!("Hello, world!");
 }
