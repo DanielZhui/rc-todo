@@ -130,7 +130,31 @@ impl Todo {
     }
 
     pub fn sort(&self) {
-        //
+        let new_todo: String;
+        let mut todo = String::new();
+        let mut done = String::new();
+
+        for line in self.todo_list.iter() {
+            if line.len() > 5 {
+                if &line[..4] == "[ ] " {
+                    let line = format!("{}\n", line);
+                    todo.push_str(&line);
+                } else if &line[..4] == "[*] " {
+                    let line = format!("{}\n", line);
+                    done.push_str(&line)
+                }
+            }
+        }
+
+        new_todo = format!("{}{}", &todo, &done);
+        let mut todo_file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(&self.todo_path)
+            .expect("Couldn't open the todo file");
+        todo_file
+            .write_all(new_todo.as_bytes())
+            .expect("Error while trying to save the todo file")
     }
 
     pub fn list(&self) {
