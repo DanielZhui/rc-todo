@@ -56,7 +56,6 @@ impl Todo {
             eprintln!("todo add takes at least one argument");
             exit(1);
         }
-        // println!("{:?}", args);
         let todo_file = OpenOptions::new()
             .create(true)
             .append(true)
@@ -120,7 +119,6 @@ impl Todo {
             match fs::copy(&self.todo_path, &self.todo_bk) {
                 Ok(_) => self.remove_file(),
                 Err(e) => {
-                    println!("{}, {}", &self.todo_path, self.todo_bk);
                     eprint!("Could't backup the todo file: {}\n", e)
                 }
             }
@@ -167,9 +165,9 @@ impl Todo {
                 let number = (index + 1).to_string();
                 let symbol = &task[..4];
                 let task = &task[4..];
-                if symbol == "[*]" {
+                if symbol == "[*] " {
                     data = format!("{} {}\n", number, task);
-                } else if symbol == "[ ]" {
+                } else if symbol == "[ ] " {
                     data = format!("{} {}\n", number, task);
                 }
                 write
