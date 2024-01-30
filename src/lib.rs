@@ -1,4 +1,4 @@
-use std::fs::OpenOptions;
+use std::fs::{self, OpenOptions};
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::Path;
 use std::process::exit;
@@ -13,21 +13,19 @@ pub struct Todo {
 
 impl Todo {
     pub fn new() -> Result<Self, String> {
+        let home = env::var("HOME").unwrap();
+        let default_path = format!("{}/TODO", &home);
         let todo_path = match env::var("TODO") {
             Ok(t) => t,
-            Err(_) => {
-                let home = env::var("HOME").unwrap();
-                let default_path = format!("{}/TODO", &home);
-                match Path::new(&default_path).exists() {
-                    true => default_path,
-                    false => format!("{}/.todo", home),
-                }
-            }
+            Err(_) => match Path::new(&default_path).exists() {
+                true => default_path,
+                false => format!("{}/.todo", home),
+            },
         };
 
         let todo_bk = match env::var("TODO_BAK") {
             Ok(t) => t,
-            Err(_) => String::from("/tmp/todo.bak"),
+            Err(_) => format!("{}/todo.bak", home),
         };
 
         let is_backup = env::var("TODO_NO_BACKUP").is_ok();
@@ -108,8 +106,27 @@ impl Todo {
         //
     }
 
+    pub fn remove_file(&self) {
+        match fs::remove_file(&self.todo_path) {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("Error while clearing todo file: {}\n", e)
+            }
+        }
+    }
+
     pub fn reset(&self) {
-        //
+        if !self.is_backup {
+            match fs::copy(&self.todo_path, &self.todo_bk) {
+                Ok(_) => self.remove_file(),
+                Err(e) => {
+                    println!("{}, {}", &self.todo_path, self.todo_bk);
+                    eprint!("Could't backup the todo file: {}\n", e)
+                }
+            }
+        } else {
+            self.remove_file()
+        }
     }
 
     pub fn sort(&self) {
