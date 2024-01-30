@@ -1,10 +1,23 @@
-use rc_todo::Todo;
+use std::env;
+
+use rc_todo::{help, Todo};
 
 fn main() {
     let todo = Todo::new().expect("Created todo instance failed");
-    // todo.add(&["words".to_string(), "cancel subscription".to_string()]);
-    todo.reset();
-    let list = todo.todo_list;
-    println!("{:?}", list);
+    let args: Vec<String> = env::args().collect();
+    if args.len() > 1 {
+        let command = &args[1];
+        match &command[..] {
+            "list" => todo.list(),
+            "add" => todo.add(&args[2..]),
+            "rm" => todo.remove(&args[2..]),
+            "done" => todo.done(&args[2..]),
+            "sort" => todo.sort(),
+            "rest" => todo.reset(),
+            "help" | "--help" | "-h" | _ => help(),
+        }
+    } else {
+        todo.list();
+    }
     println!("Hello, world!");
 }
