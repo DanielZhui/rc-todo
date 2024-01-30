@@ -77,7 +77,7 @@ impl Todo {
 
     pub fn remove(&self, args: &[String]) {
         if args.is_empty() {
-            eprint!("todo remove takes at least 1 argument");
+            eprintln!("todo remove takes at least 1 argument");
             exit(1);
         }
         let todo_file = OpenOptions::new()
@@ -101,8 +101,38 @@ impl Todo {
         }
     }
 
-    pub fn done(&self, _args: &[String]) {
-        //
+    pub fn done(&self, args: &[String]) {
+        if args.is_empty() {
+            eprintln!("todo done takes at least 1 argument");
+            exit(1);
+        }
+        let todo_file = OpenOptions::new()
+            .write(true)
+            .open(&self.todo_path)
+            .expect("Couldn't open the todo file");
+        let mut buffer = BufWriter::new(todo_file);
+        for (index, line) in self.todo_list.iter().enumerate() {
+            if line.len() > 5 {
+                if args.contains(&(index + 1).to_string()) {
+                    if &line[..4] == "[ ] " {
+                        let line = format!("[*] {}\n", &line[4..]);
+                        buffer
+                            .write_all(line.as_bytes())
+                            .expect("Unable to write data");
+                    } else if &line[..4] == "[*] " {
+                        let line = format!("[ ] {} \n", &line[4..]);
+                        buffer
+                            .write_all(line.as_bytes())
+                            .expect("Unable to write data");
+                    }
+                } else if &line[..4] == "[ ] " || &line[..4] == "[*] " {
+                    let line = format!("{}\n", line);
+                    buffer
+                        .write_all(line.as_bytes())
+                        .expect("Unable to write data")
+                }
+            }
+        }
     }
 
     pub fn remove_file(&self) {
@@ -119,7 +149,7 @@ impl Todo {
             match fs::copy(&self.todo_path, &self.todo_bk) {
                 Ok(_) => self.remove_file(),
                 Err(e) => {
-                    eprint!("Could't backup the todo file: {}\n", e)
+                    eprintln!("Could't backup the todo file: {}\n", e)
                 }
             }
         } else {
@@ -166,7 +196,7 @@ impl Todo {
                 let symbol = &task[..4];
                 let task = &task[4..];
                 if symbol == "[*] " {
-                    data = format!("{} {}\n", number, task);
+                    data = format!("{} {}\n", number, strikethrough(task));
                 } else if symbol == "[ ] " {
                     data = format!("{} {}\n", number, task);
                 }
@@ -208,4 +238,8 @@ Available commands:
 
 pub fn help() {
     println!("{}", TODO_HELP);
+}
+
+pub fn strikethrough(text: &str) -> String {
+    text.chars().flat_map(|c| vec![c, '\u{0336}']).collect()
 }
