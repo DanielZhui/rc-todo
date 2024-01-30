@@ -185,6 +185,31 @@ impl Todo {
             .expect("Error while trying to save the todo file")
     }
 
+    pub fn row(&self, args: &[String]) {
+        if args.is_empty() {
+            eprintln!("todo row takes at least 1 argument")
+        } else if args.len() > 1 {
+            eprintln!("todo row takes 1 argument (done/todo)");
+        }
+        let stdout = io::stdout();
+        let mut write = BufWriter::new(stdout);
+        for task in self.todo_list.iter() {
+            let mut data = String::new();
+            if task.len() > 5 {
+                let symbol = &task[..4];
+                let task = &task[4..];
+                if symbol == "[*] " && args[0] == "done" {
+                    data = format!("{}\n", task)
+                } else if symbol == "[ ] " && args[0] == "todo" {
+                    data = format!("{}\n", task);
+                }
+                write
+                    .write_all(data.as_bytes())
+                    .expect("Failed to write to stdout");
+            }
+        }
+    }
+
     pub fn list(&self) {
         let stdout = io::stdout();
         let mut write = BufWriter::new(stdout);

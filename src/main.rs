@@ -14,6 +14,7 @@ fn main() {
             "done" => todo.done(&args[2..]),
             "sort" => todo.sort(),
             "rest" => todo.reset(),
+            "row" => todo.row(&args[2..]),
             "help" | "--help" | "-h" | _ => help(),
         }
     } else {
