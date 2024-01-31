@@ -237,32 +237,32 @@ impl Todo {
     }
 }
 
-const TODO_HELP: &str = "Usage: todo [COMMAND] [ARGUMENTS]
-Todo is a super fast and simple tasks organizer written in rust
-Example: todo list
+const TODO_HELP: &str = "Usage: rc-todo [COMMAND] [ARGUMENTS]
+RC Todo is a super fast and simple tasks organizer written in rust
+Example: rc-todo list
 Available commands:
     - add [TASK/s]
         adds new task/s
-        Example: todo add \"buy carrots\"
+        Example: rc-todo add \"buy carrots\"
     - list
         lists all tasks
-        Example: todo list
+        Example: rc-todo list
     - done [INDEX]
         marks task as done
-        Example: todo done 2 3 (marks second and third tasks as completed)
+        Example: rc-todo done 2 3 (marks second and third tasks as completed)
     - rm [INDEX]
         removes a task
-        Example: todo rm 4
+        Example: rc-todo rm 4
     - reset
         deletes all tasks
     - restore
         restore recent backup after reset
     - sort
         sorts completed and uncompleted tasks
-        Example: todo sort
+        Example: rc-todo sort
     - raw [todo/done]
         prints nothing but done/completed tasks in plain text, useful for scripting
-        Example: todo raw done
+        Example: rc-todo raw done
 ";
 
 pub fn help() {
