@@ -210,6 +210,10 @@ impl Todo {
         }
     }
 
+    pub fn restore(&self) {
+        fs::copy(&self.todo_bk, &self.todo_path).expect("Unable to restore the backup");
+    }
+
     pub fn list(&self) {
         let stdout = io::stdout();
         let mut write = BufWriter::new(stdout);
