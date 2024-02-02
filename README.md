@@ -2,6 +2,8 @@
 
 RC Todo is a super fast and simple tasks organizer for the command line, meticulously crafted using the power and safety of Rust. Keep your tasks in check with ease and efficiency.
 
+![rc-todo](./images/rc-todo.gif)
+
 ## Installation
 
 Currently, to install RC Todo, you'll need to clone the repository and build it from source. Ensure you have Rust and Cargo installed on your system:
